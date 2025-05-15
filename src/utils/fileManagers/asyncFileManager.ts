@@ -159,53 +159,49 @@ export default class AsyncFileManager {
   }
 
   /**
- * Ensures a file exists, creating it if necessary.
- * Creates any parent directories that don't exist.
- * 
- * @param filePath - Path to the file to ensure exists
- * @param options - Optional file operation options
- * @returns Promise resolving to a FileOperationResult indicating success or failure
- */
-public static async ensureFileExists(
-  filePath: string,
-  options?: Partial<FileOperationOptions>,
-): Promise<FileOperationResult> {
-  const opts = { ...this.DEFAULT_OPTIONS, ...options };
-  filePath = this.normalizePath(filePath);
-  this.validatePath(filePath, 'filePath');
-  
-  try {
-    // First ensure parent directory exists
-    const dirPath = path.dirname(filePath);
-    const dirResult = await this.ensureDirectoryExists(dirPath, options);
-    
-    // If directory creation failed and we're not throwing, return the failure
-    if (!dirResult.success) {
-      return dirResult;
+   * Ensures a file exists, creating it if necessary.
+   * Creates any parent directories that don't exist.
+   *
+   * @param filePath - Path to the file to ensure exists
+   * @param options - Optional file operation options
+   * @returns Promise resolving to a FileOperationResult indicating success or failure
+   */
+  public static async ensureFileExists(
+    filePath: string,
+    options?: Partial<FileOperationOptions>,
+  ): Promise<FileOperationResult> {
+    const opts = { ...this.DEFAULT_OPTIONS, ...options };
+    filePath = this.normalizePath(filePath);
+    this.validatePath(filePath, 'filePath');
+
+    try {
+      // First ensure parent directory exists
+      const dirPath = path.dirname(filePath);
+      const dirResult = await this.ensureDirectoryExists(dirPath, options);
+
+      // If directory creation failed and we're not throwing, return the failure
+      if (!dirResult.success) {
+        return dirResult;
+      }
+
+      // Create or open the file in append mode, then close it
+      const fileHandle = await fs.promises.open(filePath, 'a');
+      await fileHandle.close();
+
+      return { success: true };
+    } catch (error) {
+      ErrorHandler.captureError(error, 'ensureFileExists', `Failed to create file: ${filePath}`);
+
+      if (opts.throwOnError) {
+        throw error;
+      }
+
+      return {
+        success: false,
+        error: error instanceof Error ? error : new Error(String(error)),
+      };
     }
-    
-    // Create or open the file in append mode, then close it
-    const fileHandle = await fs.promises.open(filePath, 'a');
-    await fileHandle.close();
-    
-    return { success: true };
-  } catch (error) {
-    ErrorHandler.captureError(
-      error,
-      'ensureFileExists',
-      `Failed to create file: ${filePath}`,
-    );
-    
-    if (opts.throwOnError) {
-      throw error;
-    }
-    
-    return {
-      success: false,
-      error: error instanceof Error ? error : new Error(String(error)),
-    };
   }
-}
 
   /**
    * Reads content from a file
@@ -660,19 +656,6 @@ public static async ensureFileExists(
     }
   }
 
-  static async fileWatcher(filePath: string, onChange: () => void): Promise<void> {
-    try {
-      fs.watch(filePath, (eventType) => {
-        if (eventType === 'change') {
-          onChange();
-        }
-      });
-      logger.info(`Watching for changes in ${path.basename(filePath)}`);
-    } catch (error) {
-      logger.warn(`Failed to watch file ${filePath}: ${error}`);
-    }
-  }
-
   /**
    * Resolves a given directory and fileName to an absolute normalized path with security checks
    *
@@ -691,7 +674,7 @@ public static async ensureFileExists(
     return path.resolve(directory, fileName);
   }
 
-   public static getDirectoryPath(dirPath: string): string {
+  public static getDirectoryPath(dirPath: string): string {
     try {
       this.validatePath(dirPath, 'dirPath');
       return this.resolvePath(process.cwd(), dirPath);
@@ -705,7 +688,7 @@ public static async ensureFileExists(
     }
   }
 
-   public static getFilePath(dirPath: string, fileName: string): string {
+  public static getFilePath(dirPath: string, fileName: string): string {
     try {
       this.validatePath(dirPath, 'directory');
       this.validatePath(fileName, 'fileName');

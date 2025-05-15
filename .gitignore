@@ -12,6 +12,7 @@ node_modules/
 /downloads/
 /ortoni-report/
 /allure-results/
+/allure-report/
 package-lock.json
 results.trx
 results.xml
