@@ -1,6 +1,6 @@
 import * as argon2 from 'argon2';
 import * as crypto from 'crypto';
-import SecureKeyGenerator from '../services/secureKeyGenerator';
+import SecureKeyGenerator from '../keyManagement/secureKeyGenerator';
 import { CRYPTO_CONFIG } from '../../models/utils/encryption.interface';
 import { EncryptionParameters } from '../../models/utils/encryption.interface';
 import { FileEncoding } from '../../models/utils/fileEncoding.enum';

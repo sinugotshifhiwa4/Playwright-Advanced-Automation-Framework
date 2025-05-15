@@ -1,6 +1,6 @@
-import { EnvironmentEncryptionManager } from './environmentEncryptionManager';
+import { EnvironmentEncryptionManager } from '../services/environmentEncryptionManager';
 import { EnvironmentSecretFileManager } from '../../utils/environment/utils/environmentSecretFileManager';
-import SecureKeyGenerator from './secureKeyGenerator';
+import SecureKeyGenerator from '../keyManagement/secureKeyGenerator';
 import ErrorHandler from '../../utils/errors/errorHandler';
 
 export class EnvironmentEncryptionCoordinator {

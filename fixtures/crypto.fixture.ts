@@ -2,7 +2,7 @@ import { test as cryptoBaseTest } from '@playwright/test';
 
 import { EnvironmentSecretFileManager } from '../src/utils/environment/utils/environmentSecretFileManager';
 import { EnvironmentEncryptionManager } from '../src/cryptography/services/environmentEncryptionManager';
-import { EnvironmentEncryptionCoordinator } from '../src/cryptography/services/environmentEncryptionCoordinator';
+import { EnvironmentEncryptionCoordinator } from '../src/cryptography/orchestration/environmentEncryptionCoordinator';
 
 type customFixtures = {
   environmentSecretFileManager: EnvironmentSecretFileManager;

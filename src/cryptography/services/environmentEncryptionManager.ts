@@ -106,38 +106,41 @@ export class EnvironmentEncryptionManager {
     variablesToEncrypt: Record<string, string>,
     secretKeyVariable: string,
   ): Promise<{ updatedLines: string[]; encryptedCount: number }> {
-    try{
-    let updatedLines = [...envFileLines];
-    let encryptedCount = 0;
+    try {
+      let updatedLines = [...envFileLines];
+      let encryptedCount = 0;
 
-    for (const [key, value] of Object.entries(variablesToEncrypt)) {
-      if (value) {
-        // Check if encryption is needed
-        const encryptedValue = await this.encryptValueIfPlaintext(value.trim(), secretKeyVariable);
-        if (!encryptedValue || encryptedValue === value) {
-          logger.info(`Skipping encryption: '${key}' is already encrypted.`);
-          continue;
+      for (const [key, value] of Object.entries(variablesToEncrypt)) {
+        if (value) {
+          // Check if encryption is needed
+          const encryptedValue = await this.encryptValueIfPlaintext(
+            value.trim(),
+            secretKeyVariable,
+          );
+          if (!encryptedValue || encryptedValue === value) {
+            logger.info(`Skipping encryption: '${key}' is already encrypted.`);
+            continue;
+          }
+
+          // Update the lines with the encrypted value
+          updatedLines = this.updateEnvironmentFileLines(
+            updatedLines,
+            key,
+            JSON.stringify(encryptedValue),
+          );
+          encryptedCount++;
         }
-
-        // Update the lines with the encrypted value
-        updatedLines = this.updateEnvironmentFileLines(
-          updatedLines,
-          key,
-          JSON.stringify(encryptedValue),
-        );
-        encryptedCount++;
       }
-    }
 
-    return { updatedLines, encryptedCount };
-  } catch (error) {
-    ErrorHandler.captureError(
-      error,
-      'encryptVariableValuesInFileLines',
-      'Failed to encrypt variable values in file lines',
-    );
-    throw error;
-  }
+      return { updatedLines, encryptedCount };
+    } catch (error) {
+      ErrorHandler.captureError(
+        error,
+        'encryptVariableValuesInFileLines',
+        'Failed to encrypt variable values in file lines',
+      );
+      throw error;
+    }
   }
 
   private async encryptValueIfPlaintext(value: string, secretKey: string) {
