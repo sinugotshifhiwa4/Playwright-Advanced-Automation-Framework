@@ -7,7 +7,7 @@ import {
 import ENV from '../../src/utils/environment/constants/environmentVariables';
 import logger from '../../src/utils/logging/loggerManager';
 
-test.describe('Encryption Flow', () => {
+test.describe.serial('Encryption Flow @encryption', () => {
   test('Generate Secret Key @generate-key', async ({ environmentEncryptionCoordinator }) => {
     await environmentEncryptionCoordinator.generateAndStoreSecretKey(
       EnvironmentConstants.ENV_DIR,

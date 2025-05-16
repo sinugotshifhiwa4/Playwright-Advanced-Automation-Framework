@@ -54,34 +54,49 @@ PORTAL_PASSWORD=your.password
 > ℹ️ The root `.env` file is managed automatically. Do not edit it manually.
 
 ---
+Here's a polished and professional version of your README section with improved clarity, grammar, and formatting—particularly for the **Encryption** portion and the new section about running both key generation and encryption:
+
+---
 
 ## 🔐 Encryption
 
-Sensitive credentials are encrypted using **AES-GCM** and **Argon2 hashing** to ensure secure test execution.
+Sensitive credentials are encrypted using **AES-GCM** along with **Argon2 hashing** to ensure secure and tamper-resistant storage and transmission.
 
-### Command-Line Utilities
+### 🛠️ Command-Line Utilities
 
-#### Generate Secret Key
+#### 🔑 Generate a Secret Key
+
+Use the following command to generate a unique secret key for your environment:
 
 ```bash
 npx cross-env PLAYWRIGHT_GREP=@generate-key npm run test:encryption:uat
 ```
 
-#### Encrypt Credentials
+#### 🔒 Encrypt Credentials
+
+After generating the key, run the encryption process to secure your credentials:
 
 ```bash
 npx cross-env PLAYWRIGHT_GREP=@encrypt npm run test:encryption:uat
 ```
 
-> 💡 Replace `uat` with `dev`, `prod`, etc., as needed. Ensure the corresponding `.env.<env>` file exists.
+#### 🔁 Run Both: Generate Key and Encrypt
+
+To streamline the process, you can run both the **key generation** and **encryption** steps in one command:
+
+```bash
+npx cross-env PLAYWRIGHT_GREP=@encryption npm run test:encryption:uat
+```
+
+> 💡 Replace `uat` with `dev`, `prod`, or any custom environment. Ensure that the corresponding `.env.<env>` file exists in the `envs/` directory.
 
 **Example:**
 
 ```bash
-npx cross-env PLAYWRIGHT_GREP=@generate-key npm run test:encryption:dev
+npx cross-env PLAYWRIGHT_GREP=@encryption npm run test:encryption:dev
 ```
 
-> ⚠️ Always generate the secret key **before** encrypting credentials.
+> ⚠️ **Important**: Always generate a new secret key **before** encrypting credentials—especially when rotating secrets or modifying environment-specific data.
 
 ---
 

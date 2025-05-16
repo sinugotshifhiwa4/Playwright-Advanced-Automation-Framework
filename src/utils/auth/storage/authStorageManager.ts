@@ -216,4 +216,79 @@ export default class AuthStorageManager {
       return false;
     }
   }
+
+// public static async getStorageState(expiryMinutes: number = 60): Promise<string | undefined> {
+//   try {
+//     const storagePath = this.resolveAuthStateFilePath();
+
+//     // Check if auth state file exists
+//     if (!(await this.doesAuthStateFileExist())) {
+//       logger.warn(`Auth state file not found at: ${storagePath}`);
+//       return undefined;
+//     }
+
+//     // Check if the state is expired
+//     const isExpired = await this.isAuthStateExpired(expiryMinutes);
+//     if (isExpired) {
+//       logger.warn(`Auth state file exists but is expired`);
+//       return undefined;
+//     }
+
+//     // Check if contents of the state file are valid
+//     const rawContent = await AsyncFileManager.readFile(storagePath, FileEncoding.UTF8);
+//     const state = JSON.parse(rawContent);
+
+//     const isValidStructure =
+//       state &&
+//       typeof state === 'object' &&
+//       Array.isArray(state.cookies) &&
+//       Array.isArray(state.origins);
+
+//     if (!isValidStructure) {
+//       logger.debug(`Auth state file is empty. Session will be re-initialized via fresh login.`);
+//       return undefined;
+//     }
+
+//     logger.info(`Using existing valid auth state from: ${storagePath}`);
+//     return storagePath;
+//   } catch (error) {
+//     logger.warn(`[Auth] Error retrieving storage state: ${error}`);
+//     return undefined;
+//   }
+// }
+
+public static async getStorageState(expiryMinutes: number = 60): Promise<string | undefined> {
+  try {
+    const storagePath = this.resolveAuthStateFilePath();
+
+    // Check if auth state file exists
+    if (!(await this.doesAuthStateFileExist())) {
+      logger.warn(`Auth state file not found at: ${storagePath}`);
+      return undefined;
+    }
+
+    // Check if the state is expired
+    const isExpired = await this.isAuthStateExpired(expiryMinutes);
+    if (isExpired) {
+      logger.warn(`Auth state file exists but is expired`);
+      return undefined;
+    }
+
+    // Check if contents of the state file are valid
+    const rawContent = await AsyncFileManager.readFile(storagePath, FileEncoding.UTF8);
+    
+    // Simply check if it's an empty object
+    if (rawContent.trim() === '{}') {
+      logger.debug(`Auth state file is empty. Session will be re-initialized via fresh login.`);
+      return undefined;
+    }
+
+    logger.info(`Using existing valid auth state from: ${storagePath}`);
+    return storagePath;
+  } catch (error) {
+    logger.warn(`[Auth] Error retrieving storage state: ${error}`);
+    return undefined;
+  }
+}
+
 }

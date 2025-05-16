@@ -1,11 +1,11 @@
 import { Page } from '@playwright/test';
-import AuthStateManager from '../storage/authStorageManager';
+import AuthStorageManager from '../storage/authStorageManager';
 import ErrorHandler from '../../errors/errorHandler';
 import logger from '../../logging/loggerManager';
 
 export class BrowserSessionManager {
   private readonly page: Page;
-
+  
   constructor(page: Page) {
     this.page = page;
   }
@@ -16,9 +16,9 @@ export class BrowserSessionManager {
    */
   async saveSessionState(): Promise<void> {
     try {
-      const storagePath = AuthStateManager.resolveAuthStateFilePath();
+      const storagePath = AuthStorageManager.resolveAuthStateFilePath();
       await this.page.context().storageState({ path: storagePath });
-      logger.info(`Successfully saved browser session state to: ${storagePath}`);
+      logger.debug(`Successfully saved browser session state to: ${storagePath}`);
     } catch (error) {
       ErrorHandler.captureError(error, 'saveSessionState', 'Failed to save browser session state');
       throw error;
@@ -33,18 +33,18 @@ export class BrowserSessionManager {
   async isSessionValid(expiryMinutes: number = 60): Promise<boolean> {
     try {
       // Check if auth state file exists
-      if (!AuthStateManager.doesAuthStateFileExist()) {
+      if (!(await AuthStorageManager.doesAuthStateFileExist())) {
         logger.info('No session state file exists');
         return false;
       }
-
-      // Check if the file is expired
-      const isExpired = await AuthStateManager.isAuthStateExpired(expiryMinutes);
+      
+      // Directly delegate to AuthStorageManager for expiration check
+      const isExpired = await AuthStorageManager.isAuthStateExpired(expiryMinutes);
       if (isExpired) {
         logger.info(`Session state is expired (older than ${expiryMinutes} minutes)`);
         return false;
       }
-
+      
       return true;
     } catch (error) {
       logger.warn(`Error checking session validity: ${error}`);
@@ -58,10 +58,39 @@ export class BrowserSessionManager {
    */
   clearSessionState(): boolean {
     try {
-      return AuthStateManager.initializeEmptyAuthStateFile();
+      return AuthStorageManager.initializeEmptyAuthStateFile();
     } catch (error) {
       logger.error(`Failed to clear session state: ${error}`);
       return false;
+    }
+  }
+
+  /**
+   * Gets the storage state path if it exists and is valid
+   * @param expiryMinutes Time in minutes after which the session is considered expired
+   * @returns Promise that resolves to the storage path or undefined if no valid state exists
+   */
+  async getStorageState(expiryMinutes: number = 60): Promise<string | undefined> {
+    try {
+      const storagePath = AuthStorageManager.resolveAuthStateFilePath();
+      
+      // Check if auth state file exists
+      if (!(await AuthStorageManager.doesAuthStateFileExist())) {
+        logger.warn(`Auth state file not found at: ${storagePath}`);
+        return undefined;
+      }
+  
+      // Check if the state is valid (not expired)
+      if (await this.isSessionValid(expiryMinutes)) {
+        logger.info(`Using existing auth state from: ${storagePath}`);
+        return storagePath;
+      } else {
+        logger.warn(`Auth state file exists but is expired`);
+        return undefined;
+      }
+    } catch (error) {
+      logger.warn(`[Auth] Error retrieving storage state: ${error}`);
+      return undefined;
     }
   }
 }
