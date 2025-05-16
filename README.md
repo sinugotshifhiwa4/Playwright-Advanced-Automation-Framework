@@ -6,19 +6,19 @@ This repository hosts the **Orange HRM Test Automation Framework**, developed us
 
 ## 📚 Table of Contents
 
-* [Installation](#-installation)
-* [Environment Setup](#️-environment-setup)
-* [Encryption](#-encryption)
-* [Authentication & Test Context](#-authentication--test-context)
-* [Running Tests](#-running-tests)
-* [Developer Tools](#-developer-tools)
-* [Running Tests by Tag](#-running-tests-by-tag)
-* [Logger](#logger)
-* [Centralized Error Handling](#centralized-error-handling)
-* [Sanitization](#sanitization)
-* [Async File Manager](#asyncfilemanager)
-* [Reporting](#reporting)
-* [Notes](#-notes)
+- [Installation](#-installation)
+- [Environment Setup](#️-environment-setup)
+- [Encryption](#-encryption)
+- [Authentication & Test Context](#-authentication--test-context)
+- [Running Tests](#-running-tests)
+- [Developer Tools](#-developer-tools)
+- [Running Tests by Tag](#-running-tests-by-tag)
+- [Logger](#logger)
+- [Centralized Error Handling](#centralized-error-handling)
+- [Sanitization](#sanitization)
+- [Async File Manager](#asyncfilemanager)
+- [Reporting](#reporting)
+- [Notes](#-notes)
 
 ---
 
@@ -54,6 +54,7 @@ PORTAL_PASSWORD=your.password
 > ℹ️ The root `.env` file is managed automatically. Do not edit it manually.
 
 ---
+
 Here's a polished and professional version of your README section with improved clarity, grammar, and formatting—particularly for the **Encryption** portion and the new section about running both key generation and encryption:
 
 ---
@@ -100,7 +101,7 @@ npx cross-env PLAYWRIGHT_GREP=@encryption npm run test:encryption:dev
 
 ---
 
-## 🔐 Authentication & Test Context
+## 🔐 Authentication & Authentication Context
 
 Authentication and session management are handled using **Playwright fixtures** and the reusable `TestContextSetup` utility.
 
@@ -110,31 +111,32 @@ Customize login behavior per test:
 
 ```ts
 test.use({
-  requireAuthentication: false,
-  requireAuthenticationState: false,
+  requireAuth: false,
+  requireAuthState: false,
 });
 ```
 
 Dynamic login setup example:
 
 ```ts
-test('Login with valid credentials', async ({ testContext }) => {
-  await testContext.configureLoginState(true, false);
+await authenticationContext.configureLoginState({
+  requireAuth: true,
+  requireAuthState: false,
 });
 ```
 
 **Parameters:**
 
-* `requireAuth`: Whether to perform login.
-* `requireAuthState`: Whether to reuse login state.
+- `requireAuth`: Whether to perform login.
+- `requireAuthState`: Whether to reuse login state.
 
 ### Test Context Utility
 
 The `TestContext` utility supports:
 
-* Portal navigation
-* Login with encrypted credentials
-* Session state management
+- Portal navigation
+- Login with encrypted credentials
+- Session state management
 
 ---
 
@@ -198,9 +200,9 @@ Filter tests using the `PLAYWRIGHT_GREP` environment variable.
 
 The framework uses the **Winston** logger with environment-based log levels:
 
-* **debug** → `dev`
-* **info** → `uat`
-* **error** → `prod`
+- **debug** → `dev`
+- **info** → `uat`
+- **error** → `prod`
 
 ---
 
@@ -212,19 +214,19 @@ A robust centralized system for error logging, categorization, and reporting, in
 
 1. **Unified Categorization** via `ErrorCategory` enum:
 
-   * API, DB, UI, auth, I/O, service, network, etc.
+   - API, DB, UI, auth, I/O, service, network, etc.
 
 2. **Security & Sanitization**:
 
-   * Removes stack traces, sensitive paths, and headers
+   - Removes stack traces, sensitive paths, and headers
 
 3. **API Error Response Builder**:
 
-   * Converts internal errors into REST-compliant responses
+   - Converts internal errors into REST-compliant responses
 
 4. **ErrorProcessor Utility**:
 
-   * Cleans, deduplicates, categorizes, and logs errors
+   - Cleans, deduplicates, categorizes, and logs errors
 
 ### Usage Example
 
@@ -251,16 +253,16 @@ A utility to mask sensitive data in logs and responses.
 #### Default Masked Keys:
 
 ```ts
-['password', 'apiKey', 'secret', 'authorization', 'token', 'accessToken', 'refreshToken', 'cookie']
+['password', 'apiKey', 'secret', 'authorization', 'token', 'accessToken', 'refreshToken', 'cookie'];
 ```
 
 #### Features:
 
-* Object & header sanitization
-* Path-based masking
-* Key-value pair masking
-* URL-aware truncation
-* Integration with Winston
+- Object & header sanitization
+- Path-based masking
+- Key-value pair masking
+- URL-aware truncation
+- Integration with Winston
 
 #### Example:
 
@@ -276,10 +278,10 @@ A modern, promise-based utility for secure file operations.
 
 ### Key Features
 
-* Safe async read/write
-* Directory handling
-* Path validation
-* Integrated logging
+- Safe async read/write
+- Directory handling
+- Path validation
+- Integrated logging
 
 ### Example
 
@@ -292,13 +294,13 @@ await AsyncFileManager.writeFile('out.txt', 'Hello');
 
 ## 📊 Reporting
 
-* **Playwright HTML report**:
+- **Playwright HTML report**:
 
   ```bash
   npm run report
   ```
 
-* **Allure Report**:
+- **Allure Report**:
 
   ```bash
   npm run allure:generate
@@ -310,10 +312,10 @@ await AsyncFileManager.writeFile('out.txt', 'Hello');
 
 ## 📝 Notes
 
-* ❌ **Never commit `.env` files** to version control.
-* 🔐 Always regenerate encryption keys when credentials change.
-* 📦 Run `npm install` after switching branches or pulling updates.
-* ⚡ Reusing authentication state speeds up tests and reduces flakiness.
-* ✅ The framework is CI-ready and designed for long-term growth.
+- ❌ **Never commit `.env` files** to version control.
+- 🔐 Always regenerate encryption keys when credentials change.
+- 📦 Run `npm install` after switching branches or pulling updates.
+- ⚡ Reusing authentication state speeds up tests and reduces flakiness.
+- ✅ The framework is CI-ready and designed for long-term growth.
 
 ---
