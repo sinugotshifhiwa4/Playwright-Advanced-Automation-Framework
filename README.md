@@ -103,7 +103,7 @@ npx cross-env PLAYWRIGHT_GREP=@encryption npm run test:encryption:dev
 
 ## 🔐 Authentication & Authentication Context
 
-Authentication and session management are handled using **Playwright fixtures** and the reusable `TestContextSetup` utility.
+Authentication and session management are handled using **Playwright fixtures** and the reusable `AuthenticationContext` utility.
 
 ### Authentication Configuration
 
