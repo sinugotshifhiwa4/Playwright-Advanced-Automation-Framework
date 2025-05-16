@@ -144,12 +144,13 @@ The `TestContext` utility supports:
 
 Use these commands to run tests in different environments:
 
-| Command                 | Description                            |
-| ----------------------- | -------------------------------------- |
-| `npm run test:all:uat`  | Run all tests (UI, API, DB) in UAT     |
-| `npm run test:api:uat`  | Run only API tests in UAT              |
-| `npm run test:ui:uat`   | Run only UI tests in UAT               |
-| `npm run test:auth:uat` | Run auth flow and generate login state |
+| Command                   | Description                            |
+| ------------------------- | -------------------------------------- |
+| `npm run test:all:uat`    | Run all tests (UI, API, DB) in UAT     |
+| `npm run test:api:uat`    | Run only API tests in UAT              |
+| `npm run test:ui:uat`     | Run only UI tests in UAT               |
+| `npm run test:auth:uat`   | Run auth flow and generate login state |
+| `npm run test:failed:uat` | Run only Failed Tests                  |
 
 > 💡 Replace `uat` with `dev`, `prod`, or your target environment.
 
