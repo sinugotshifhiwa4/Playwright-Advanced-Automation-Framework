@@ -22,37 +22,21 @@ export class TopMenuPage extends BasePage {
     super(page);
     this.page = page;
 
-    this.defaultLandingPageHeader = page.locator(`//h6[normalize-space()='Dashboard']`);
-    this.upgradeButton = page.locator(
-      `//button[@type='button' and contains(normalize-space(), 'Upgrade')]`,
-    );
-    this.userProfileMenu = page.locator(`span[class='oxd-userdropdown-tab']`);
-    this.userProfileDropdownOptionAbout = page.locator(`//a[@role='menuitem' and text()='About']`);
-    this.userProfileDropdownOptionSupport = page.locator(
-      `//a[@role='menuitem' and text()='Support']`,
-    );
-    this.userProfileDropdownOptionChangePassword = page.locator(
-      `//a[@role='menuitem' and text()='Change Password']`,
-    );
-    this.userProfileDropdownOptionLogout = page.locator(
-      `//a[@role='menuitem' and text()='Logout']`,
-    );
+    this.defaultLandingPageHeader = page.getByRole('heading', { name: 'Dashboard', level: 6 });
+    this.upgradeButton = page.getByRole('button', { name: 'Upgrade' });
+    this.userProfileMenu = page.locator(`span.oxd-userdropdown-tab`);
+    this.userProfileDropdownOptionAbout = page.getByRole('menuitem', { name: 'About' });
+    this.userProfileDropdownOptionSupport = page.getByRole('menuitem', { name: 'Support' });
+    this.userProfileDropdownOptionChangePassword = page.getByRole('menuitem', {
+      name: 'Change Password',
+    });
+    this.userProfileDropdownOptionLogout = page.getByRole('menuitem', { name: 'Logout' });
 
     // About
-    this.companyNameLabel = page.locator(
-      `//div[@class='oxd-grid-2 orangehrm-about']//p[normalize-space(.)='Company Name:']`,
-    );
-    this.versionLabel = page.locator(
-      `//div[@class='oxd-grid-2 orangehrm-about']//p[normalize-space(.)='Version:']`,
-    );
-    this.activeEmployeesLabel = page.locator(
-      `//div[@class='oxd-grid-2 orangehrm-about']//p[normalize-space(.)='Active Employees:']`,
-    );
-    // this.employeesTerminatedLabel = page.locator(
-    //   `//div[contains(@class,'oxd-grid-2') and contains(@class,'orangehrm-about')]//p[normalize-space(.)='Employees Terminated:']`,
-    // );
-
-    this.employeesTerminatedLabel = page.getByText('Employees Terminated:');
+    this.companyNameLabel = page.getByText('Company Name');
+    this.versionLabel = page.getByText('Version');
+    this.activeEmployeesLabel = page.getByText('Active Employees');
+    this.employeesTerminatedLabel = page.getByText('Employees Terminated');
   }
 
   async getDefaultDashboardHeaderText() {

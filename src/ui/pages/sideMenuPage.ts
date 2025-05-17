@@ -25,22 +25,22 @@ export class SideMenuPage extends BasePage {
     super(page);
     this.page = page;
 
-    this.collapseSidebarToggle = page.locator(`i[class='oxd-icon bi-chevron-left']`);
-    this.expandSidebarToggle = page.locator(`i[class='oxd-icon bi-chevron-right']`);
-    this.orangeHrmLogo = page.locator(`img[alt='client brand banner']`);
-    this.searchInput = page.locator(`input[placeholder='Search']`);
-    this.adminMenu = page.locator(`//a[contains(@href, 'admin')]`);
-    this.pimMenu = page.locator(`//a[contains(@href, 'pim')]`).first();
-    this.leaveMenu = page.locator(`//a[contains(@href, 'leave')]`);
-    this.timeMenu = page.locator(`//a[contains(@href, 'time')]`);
-    this.recruitmentMenu = page.locator(`//a[contains(@href, 'recruitment')]`);
-    this.myInfoMenu = page.locator(`//a[contains(@href, 'pim')]`).last();
-    this.performanceMenu = page.locator(`//a[contains(@href, 'performance')]`);
-    this.dashboardMenu = page.locator(`//a[contains(@href, 'dashboard')]`);
-    this.directoryMenu = page.locator(`//a[contains(@href, 'directory')]`);
-    this.maintenanceMenu = page.locator(`//a[contains(@href, 'maintenance')]`);
-    this.claimsMenu = page.locator(`//a[contains(@href, 'claim')]`);
-    this.buzzMenu = page.locator(`//a[contains(@href, 'buzz')]`);
+    this.collapseSidebarToggle = page.locator(`button:has(i.bi-chevron-left)`);
+    this.expandSidebarToggle = page.locator(`button:has(i.bi-chevron-right)`);
+    this.orangeHrmLogo = page.getByRole('link', { name: 'client brand banner' });
+    this.searchInput = page.getByPlaceholder('Search');
+    this.adminMenu = page.getByRole('link', { name: 'Admin' });
+    this.pimMenu = page.getByRole('link', { name: 'PIM' });
+    this.leaveMenu = page.getByRole('link', { name: 'Leave' });
+    this.timeMenu = page.getByRole('link', { name: 'Time' });
+    this.recruitmentMenu = page.getByRole('link', { name: 'Recruitment' });
+    this.myInfoMenu = page.getByRole('link', { name: 'My Info' });
+    this.performanceMenu = page.getByRole('link', { name: 'Performance' });
+    this.dashboardMenu = page.getByRole('link', { name: 'Dashboard' });
+    this.directoryMenu = page.getByRole('link', { name: 'Directory' });
+    this.maintenanceMenu = page.getByRole('link', { name: 'Maintenance' });
+    this.claimsMenu = page.getByRole('link', { name: 'Claim' });
+    this.buzzMenu = page.getByRole('link', { name: 'Buzz' });
   }
 
   async verifyCollapseSidebarToggleIsVisible() {
@@ -251,11 +251,7 @@ export class SideMenuPage extends BasePage {
     try {
       return await this.isElementVisible(this.dashboardMenu);
     } catch (error) {
-      ErrorHandler.captureError(
-        error,
-        'isDashboardMenuVisible',
-        'Failed to verify dashboard menu',
-      );
+      ErrorHandler.captureError(error, 'isDashboardMenuVisible', 'Failed to verify dashboard menu');
       throw error;
     }
   }
