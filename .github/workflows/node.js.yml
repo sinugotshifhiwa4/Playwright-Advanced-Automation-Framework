@@ -19,23 +19,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
       fail-fast: false
-
+    
     env:
       CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
       CI_PORTAL_USERNAME: ${{ secrets.PORTAL_USERNAME }}
       CI_PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
       CI_ENVIRONMENT: "uat"
       isCI: "true"
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -47,7 +47,7 @@ jobs:
             echo "No package-lock.json found. Creating one..."
             npm install --package-lock-only
           fi
-
+      
       # Setup cache with unique key per job
       - name: Setup npm cache
         uses: actions/setup-node@v4
@@ -58,10 +58,10 @@ jobs:
           
       - name: Install dependencies
         run: npm install
-
+      
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-
+      
       # Set the PLAYWRIGHT_GREP environment variable
       - name: Set test filter
         run: |
@@ -71,13 +71,13 @@ jobs:
             echo "PLAYWRIGHT_GREP=@regression" >> $GITHUB_ENV
           fi
           echo "Running with filter: $PLAYWRIGHT_GREP"
-
+      
       # Run tests with the environment variable set
       - name: Run tests
         env:
           CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
         run: npm run test:all:uat
-
+      
       # Upload various report types as artifacts using v4
       - name: Upload HTML report
         if: always()
@@ -94,7 +94,7 @@ jobs:
           name: trx-report-${{ matrix.node-version }}
           path: results.trx
           retention-days: 30
-
+      
       - name: Upload Ortoni report
         if: always()
         uses: actions/upload-artifact@v4
@@ -102,12 +102,32 @@ jobs:
           name: ortoni-report-${{ matrix.node-version }}
           path: ortoni-report/
           retention-days: 30
-
-      - name: Upload Playwright test media (screenshots/videos)
+      
+      # Add a new step to explicitly upload the test screenshots
+      - name: Upload test screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-test-results-${{ matrix.node-version }}
-          path: test-results/
+          name: test-screenshots-${{ matrix.node-version }}
+          path: |
+            test-results/**/screenshots/*.png
+            test-results/**/*.png
           retention-days: 30
-
+          
+      # Add a new step to explicitly upload the test videos
+      - name: Upload test videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-videos-${{ matrix.node-version }}
+          path: test-results/**/video/*.webm
+          retention-days: 30
+      
+      # Optionally upload test traces that include videos as well
+      - name: Upload test traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-traces-${{ matrix.node-version }}
+          path: test-results/**/trace*.zip
+          retention-days: 30
