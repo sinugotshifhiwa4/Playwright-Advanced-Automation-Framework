@@ -78,7 +78,7 @@ jobs:
         env:
           CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
         run:
-          npm run test:all:uat -- --shard=${{ matrix.shard }}/6
+          npm run test:all:uat -- --shard=${{ matrix.shard }}/3
 
       - name: Upload HTML report
         if: always()
