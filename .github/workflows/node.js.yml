@@ -104,41 +104,10 @@ jobs:
           path: ortoni-report/
           retention-days: 30
 
-      # Add a new step to explicitly upload the test screenshots
-      - name: Upload test screenshots
+      - name: Upload video artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-screenshots-${{ matrix.node-version }}
-          path: |
-            test-results/**/*.png
-          retention-days: 30
-
-      # Add a new step to explicitly upload the test videos
-      - name: Upload test videos
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-videos-${{ matrix.node-version }}
-          path: |
-            test-results/**/*.webm
-          retention-days: 30
-
-      # Optionally upload test traces that include videos as well
-      - name: Upload test traces
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-traces-${{ matrix.node-version }}
-          path: |
-            test-results/**/*.zip
-          retention-days: 30
-
-      # Upload the entire test-results directory as a fallback
-      - name: Upload all test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: all-test-results-${{ matrix.node-version }}
-          path: test-results/
-          retention-days: 30
+         name: test-videos-${{ matrix.node-version }}
+         path: test-results/
+         retention-days: 30
