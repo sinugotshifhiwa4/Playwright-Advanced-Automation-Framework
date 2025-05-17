@@ -23,6 +23,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
+        shard: [1, 2, 3, 4, 5, 6]
       fail-fast: false
 
     env:
@@ -77,7 +78,7 @@ jobs:
         env:
           CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
         run:
-          npm run test:all:uat
+          npm run test:all:uat -- --shard=${{ matrix.shard }}/6
 
           # Upload various report types as artifacts using v4
       - name: Upload HTML report
@@ -102,13 +103,4 @@ jobs:
         with:
           name: ortoni-report-${{ matrix.node-version }}
           path: ortoni-report/
-          retention-days: 30
-
-          # Add this step to your workflow YAML
-      - name: Upload Test Results (videos/screenshots)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-test-results-${{ matrix.node-version }}
-          path: test-results/  # <── This is where videos live
           retention-days: 30
