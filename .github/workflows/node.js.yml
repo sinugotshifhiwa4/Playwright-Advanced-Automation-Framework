@@ -10,7 +10,7 @@ on:
       testType:
         description: 'Type of test to run'
         required: true
-        default: 'sanity'
+        default: 'regression'
         type: choice
         options:
           - sanity
@@ -23,12 +23,14 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-      fail-fast: false  # Allow other versions to continue if one fails
+      fail-fast: false
 
     env:
+      CI: true
       CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
       CI_PORTAL_USERNAME: ${{ secrets.PORTAL_USERNAME }}
       CI_PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
+      CI_ENVIRONMENT: "uat"
 
     steps:
       - name: Checkout code
@@ -38,7 +40,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          # Removed cache here since we need to create the lock file first
 
       - name: Create package-lock.json if not exists
         run: |
@@ -56,23 +57,23 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Set PLAYWRIGHT_GREP
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          if [ "${{ github.event.inputs.testType }}" = "sanity" ]; then
-            echo "PLAYWRIGHT_GREP=@sanity" >> $GITHUB_ENV
-          else
-            echo "PLAYWRIGHT_GREP=@regression" >> $GITHUB_ENV
-          fi
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run tests
-        run: npm run test:all:uat
-
-      - name: Debug output
-        if: ${{ runner.debug == 'true' }}
+      # Set the PLAYWRIGHT_GREP environment variable
+      - name: Set test filter
         run: |
-          echo "APP_VERSION=$APP_VERSION"
-          echo "PORTAL_BASE_URL=$PORTAL_BASE_URL"
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "PLAYWRIGHT_GREP=@${{ github.event.inputs.testType }}" >> $GITHUB_ENV
+          else
+            echo "PLAYWRIGHT_GREP=@regression" >> $GITHUB_ENV
+          fi
+          echo "Set PLAYWRIGHT_GREP to $PLAYWRIGHT_GREP"
+
+      # Run tests with the environment variable set
+      - name: Run tests
+        env:
+          CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
+        run: |
+          echo "Running tests with PLAYWRIGHT_GREP=$PLAYWRIGHT_GREP"
+          npm run test:all:uat
