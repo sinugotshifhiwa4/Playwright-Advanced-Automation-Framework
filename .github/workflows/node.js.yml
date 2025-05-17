@@ -103,3 +103,12 @@ jobs:
           name: ortoni-report-${{ matrix.node-version }}
           path: ortoni-report/
           retention-days: 30
+
+          # Add this step to your workflow YAML
+      - name: Upload Test Results (videos/screenshots)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results-${{ matrix.node-version }}
+          path: test-results/  # <── This is where videos live
+          retention-days: 30
