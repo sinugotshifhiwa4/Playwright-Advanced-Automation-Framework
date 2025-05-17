@@ -27,7 +27,7 @@ const reportConfig: OrtoniReportConfig = {
   open: isCI ? 'never' : 'always',
   folderPath: 'ortoni-report',
   filename: 'index.html',
-  logo: path.resolve('assets', 'orange-hrm-logo.jpg'),
+  logo: path.resolve(process.cwd(), "./assets/orange-hrm-logo.jpg"),
   title: 'Orange HRM Test Report',
   showProject: false,
   projectName: 'playwright-advanced-automation-framework',

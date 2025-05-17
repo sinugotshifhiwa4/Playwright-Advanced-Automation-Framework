@@ -102,3 +102,12 @@ jobs:
           name: ortoni-report-${{ matrix.node-version }}
           path: ortoni-report/
           retention-days: 30
+
+      - name: Upload Playwright test media (screenshots/videos)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results-${{ matrix.node-version }}
+          path: test-results/
+          retention-days: 30
+
