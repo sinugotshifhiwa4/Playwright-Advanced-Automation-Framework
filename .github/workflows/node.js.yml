@@ -26,10 +26,9 @@ jobs:
       fail-fast: false  # Allow other versions to continue if one fails
 
     env:
-      APP_VERSION: ${{ vars.APP_VERSION }}
-      PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
-      PORTAL_USERNAME: ${{ secrets.PORTAL_USERNAME }}
-      PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
+      CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
+      CI_PORTAL_USERNAME: ${{ secrets.PORTAL_USERNAME }}
+      CI_PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
 
     steps:
       - name: Checkout code
