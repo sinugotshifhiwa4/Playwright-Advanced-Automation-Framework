@@ -78,11 +78,6 @@ jobs:
           CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
         run: npm run test:all:uat
 
-      # Generate Allure report using your npm script
-      - name: Generate Allure Report
-        if: always()
-        run: npm run allure:generate
-
       # Upload various report types as artifacts using v4
       - name: Upload HTML report
         if: always()
@@ -92,34 +87,10 @@ jobs:
           path: playwright-report/
           retention-days: 30
           
-      - name: Upload JUnit report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: junit-report-${{ matrix.node-version }}
-          path: results.xml
-          retention-days: 30
-          
       - name: Upload TRX report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: trx-report-${{ matrix.node-version }}
           path: results.trx
-          retention-days: 30
-          
-      - name: Upload Allure results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-${{ matrix.node-version }}
-          path: allure-results/
-          retention-days: 30
-          
-      - name: Upload Allure report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report-${{ matrix.node-version }}
-          path: allure-report/
           retention-days: 30
