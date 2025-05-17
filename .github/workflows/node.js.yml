@@ -1,0 +1,62 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+    inputs:
+      testType:
+        description: 'Type of test to run'
+        required: true
+        default: 'sanity'
+        type: choice
+        options:
+          - sanity
+          - regression
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    env:
+      APP_VERSION: ${{ vars.APP_VERSION }}
+      PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
+      PORTAL_USERNAME: ${{ secrets.PORTAL_USERNAME }}
+      PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Set PLAYWRIGHT_GREP
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [ "${{ github.event.inputs.testType }}" = "sanity" ]; then
+            echo "PLAYWRIGHT_GREP=@sanity" >> $GITHUB_ENV
+          else
+            echo "PLAYWRIGHT_GREP=@regression" >> $GITHUB_ENV
+          fi
+
+      - name: Run tests
+        run: npm run test:all:uat
+
+      - name: Debug output
+        if: ${{ runner.debug == 'true' }}
+        run: |
+          echo "APP_VERSION=$APP_VERSION"
+          echo "PORTAL_BASE_URL=$PORTAL_BASE_URL"
