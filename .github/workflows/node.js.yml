@@ -26,11 +26,11 @@ jobs:
       fail-fast: false
 
     env:
-      CI: true
       CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
       CI_PORTAL_USERNAME: ${{ secrets.PORTAL_USERNAME }}
       CI_PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
       CI_ENVIRONMENT: "uat"
+      isCI: "true"
 
     steps:
       - name: Checkout code
@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-
+          
       - name: Create package-lock.json if not exists
         run: |
           if [ ! -f package-lock.json ]; then
@@ -48,12 +48,14 @@ jobs:
             npm install --package-lock-only
           fi
 
+      # Setup cache with unique key per job
       - name: Setup npm cache
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-
+          cache-dependency-path: 'package-lock.json'
+          
       - name: Install dependencies
         run: npm install
 
@@ -68,12 +70,56 @@ jobs:
           else
             echo "PLAYWRIGHT_GREP=@regression" >> $GITHUB_ENV
           fi
-          echo "Set PLAYWRIGHT_GREP to $PLAYWRIGHT_GREP"
+          echo "Running with filter: $PLAYWRIGHT_GREP"
 
       # Run tests with the environment variable set
       - name: Run tests
         env:
           CI_PORTAL_BASE_URL: ${{ vars.PORTAL_BASE_URL }}
-        run: |
-          echo "Running tests with PLAYWRIGHT_GREP=$PLAYWRIGHT_GREP"
-          npm run test:all:uat
+        run: npm run test:all:uat
+
+      # Generate Allure report using your npm script
+      - name: Generate Allure Report
+        if: always()
+        run: npm run allure:generate
+
+      # Upload various report types as artifacts
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-html-report-${{ matrix.node-version }}
+          path: playwright-report/
+          retention-days: 30
+          
+      - name: Upload JUnit report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: junit-report-${{ matrix.node-version }}
+          path: results.xml
+          retention-days: 30
+          
+      - name: Upload TRX report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: trx-report-${{ matrix.node-version }}
+          path: results.trx
+          retention-days: 30
+          
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results-${{ matrix.node-version }}
+          path: allure-results/
+          retention-days: 30
+          
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report-${{ matrix.node-version }}
+          path: allure-report/
+          retention-days: 30

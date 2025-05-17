@@ -78,6 +78,8 @@ export default defineConfig({
     ? [
         ['html', { open: 'never' }],
         ['junit', { outputFile: 'results.xml' }],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ['ortoni-report', reportConfig],
         ['dot'],
         ['playwright-trx-reporter', { outputFile: 'results.trx' }],
       ]
