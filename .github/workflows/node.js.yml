@@ -80,12 +80,11 @@ jobs:
         run:
           npm run test:all:uat -- --shard=${{ matrix.shard }}/6
 
-          # Upload various report types as artifacts using v4
       - name: Upload HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-html-report-${{ matrix.node-version }}
+          name: playwright-html-report-node${{ matrix.node-version }}-shard${{ matrix.shard }}
           path: playwright-report/
           retention-days: 30
 
@@ -93,7 +92,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: trx-report-${{ matrix.node-version }}
+          name: trx-report-node${{ matrix.node-version }}-shard${{ matrix.shard }}
           path: results.trx
           retention-days: 30
 
@@ -101,6 +100,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ortoni-report-${{ matrix.node-version }}
+          name: ortoni-report-node${{ matrix.node-version }}-shard${{ matrix.shard }}
           path: ortoni-report/
           retention-days: 30
