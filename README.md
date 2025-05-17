@@ -55,10 +55,6 @@ PORTAL_PASSWORD=your.password
 
 ---
 
-Here's a polished and professional version of your README section with improved clarity, grammar, and formatting—particularly for the **Encryption** portion and the new section about running both key generation and encryption:
-
----
-
 ## 🔐 Encryption
 
 Sensitive credentials are encrypted using **AES-GCM** along with **Argon2 hashing** to ensure secure and tamper-resistant storage and transmission.
