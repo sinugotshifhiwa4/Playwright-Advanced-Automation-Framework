@@ -83,10 +83,10 @@ jobs:
         if: always()
         run: npm run allure:generate
 
-      # Upload various report types as artifacts
+      # Upload various report types as artifacts using v4
       - name: Upload HTML report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-html-report-${{ matrix.node-version }}
           path: playwright-report/
@@ -94,7 +94,7 @@ jobs:
           
       - name: Upload JUnit report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: junit-report-${{ matrix.node-version }}
           path: results.xml
@@ -102,7 +102,7 @@ jobs:
           
       - name: Upload TRX report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: trx-report-${{ matrix.node-version }}
           path: results.trx
@@ -110,7 +110,7 @@ jobs:
           
       - name: Upload Allure results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results-${{ matrix.node-version }}
           path: allure-results/
@@ -118,7 +118,7 @@ jobs:
           
       - name: Upload Allure report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ matrix.node-version }}
           path: allure-report/
