@@ -84,14 +84,21 @@ export class EnvironmentSecretFileManager {
   }
 
   /**
-   * Handles the case when the base environment file is missing
-   * @param baseEnvFilePath Path where the base file was expected
-   * @throws Error if the base file is required but not found
+   * Handles the case where the base environment file is missing.
+   * @param baseEnvFilePath Path to the base environment file
+   * @throws Error if the base environment file is required and not found
+   * @returns Promise resolving to void
    */
   public async handleMissingBaseEnvFile(baseEnvFilePath: string): Promise<void> {
     const shouldRequireBaseFile = process.env.REQUIRE_BASE_ENV_FILE === 'true';
+    const isGeneratingKey = (process.env.PLAYWRIGHT_GREP || '').includes('@generate-key');
     const envDir = environmentConfig.EnvironmentConstants.ENV_DIR;
     const baseEnvFile = environmentConfig.EnvironmentConstants.BASE_ENV_FILE;
+
+    // Skip warning completely when generating keys
+    if (isGeneratingKey) {
+      return;
+    }
 
     if (shouldRequireBaseFile) {
       ErrorHandler.logAndThrow(
@@ -105,7 +112,6 @@ export class EnvironmentSecretFileManager {
         `This file is optional if you are running the secret key generation for the first time.`,
         `To suppress this warning in future runs, ensure the file exists or set 'REQUIRE_BASE_ENV_FILE=false'.`,
       ].join('\n');
-
       logger.warn(warningMessage);
     }
   }

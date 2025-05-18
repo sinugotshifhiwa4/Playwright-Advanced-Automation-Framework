@@ -10,7 +10,7 @@ import logger from '../../logging/loggerManager';
  * Responsible for loading and managing environment configuration files
  * Handles initialization of environment variables from appropriate .env files
  */
-export default class EnvironmentConfigLoader {
+export default class EnvironmentConfigManager {
   private environmentSecretFileManager: EnvironmentSecretFileManager;
 
   // Instance state tracking
@@ -46,9 +46,14 @@ export default class EnvironmentConfigLoader {
       // Setup environment using the helper method
       await this.setupEnvironment();
       this.initialized = true;
-      logger.info(
-        `Environment successfully initialized with ${this.loadedFiles.length} config files`,
-      );
+      // Log success only if we loaded at least one file
+      if (this.loadedFiles.length > 0) {
+        logger.info(
+          `Environment successfully initialized with ${this.loadedFiles.length} config files`,
+        );
+      } else {
+        logger.warn('Environment initialized but no config files were loaded');
+      }
     } catch (error) {
       ErrorHandler.captureError(error, 'initialize', 'Failed to set up environment variables');
       throw error;
